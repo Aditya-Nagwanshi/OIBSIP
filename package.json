@@ -1,0 +1,24 @@
+{
+  "name": "slice-theory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slice Theory - a 3D pizza storytelling and delivery platform",
+  "scripts": {
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "dev": "concurrently -k -n MONGO,API,WEB -c magenta,cyan,yellow \"npm:dev:db\" \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:db": "node scripts/start-mongo.js",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server run start",
+    "test": "npm --prefix server test",
+    "test:e2e": "node --test server/tests/api.smoke.test.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+tools/node_modules/
+
+# Build output
+client/dist/
+
+# Local configuration and secrets
+.env
+.env.local
+.env.*.local
+server/.env
+
+# Runtime logs / generated mail
+logs/
+server/logs/
+*.log
+
+# Local database binaries, downloads, data and logs
+tools/mongodb/
+tools/mongodb-download/
+tools/mongodb-data/
+tools/mongodb-logs/
+tools/mongodb-test-data/
+tools/*.zip
+tools/**/*.zip
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Large local source footage (not needed to run the app)
+/1101 (1).mp4
