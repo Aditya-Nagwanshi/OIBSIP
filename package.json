@@ -4,7 +4,7 @@
   "private": true,
   "description": "Slice Theory - a 3D pizza storytelling and delivery platform",
   "scripts": {
-    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install --include=dev",
     "dev": "concurrently -k -n MONGO,API,WEB -c magenta,cyan,yellow \"npm:dev:db\" \"npm:dev:server\" \"npm:dev:client\"",
     "dev:db": "node scripts/start-mongo.js",
     "dev:server": "npm --prefix server run dev",
