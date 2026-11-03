@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Flame, Star } from 'lucide-react';
 import Logo from '../ui/Logo';
 
-export default function AuthShell({ eyebrow, title, accent, subtitle, children, footer, image = '/media/oven.webp', quote }) {
+export default function AuthShell({ eyebrow, title, accent, subtitle, children, footer, image = '/media/pizzas/margherita.webp', quote }) {
   return (
     <section className="auth-page">
       <div className="container auth-page__grid">

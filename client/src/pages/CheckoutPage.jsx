@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AlertCircle, ArrowRight, BadgeCheck, CreditCard, Loader2, Lock, MapPin, Minus, Plus, ShieldCheck, ShoppingBag, Trash2, Truck } from 'lucide-react';
+import { AlertCircle, ArrowRight, BadgeCheck, Banknote, CreditCard, Loader2, Lock, MapPin, Minus, Plus, ShieldCheck, ShoppingBag, TicketPercent, Trash2, Truck, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useConfig } from '../contexts/ConfigContext';
@@ -20,6 +20,8 @@ const emptyAddress = {
   phone: '',
   instructions: '',
 };
+
+const round = (value) => Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 
 function readAddress() {
   try {
@@ -42,6 +44,10 @@ export default function CheckoutPage() {
   const [error, setError] = useState('');
   const [order, setOrder] = useState(null);
   const [payment, setPayment] = useState(null);
+  const [payMethod, setPayMethod] = useState('online');
+  const [couponInput, setCouponInput] = useState('');
+  const [coupon, setCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
 
   useEffect(() => {
     localStorage.setItem(ADDRESS_KEY, JSON.stringify(address));
@@ -53,6 +59,36 @@ export default function CheckoutPage() {
 
   const deliveryIsFree = totals.delivery === 0;
   const payMode = config?.payments?.mode === 'razorpay' ? 'Razorpay test checkout' : 'Demo checkout';
+  const availableCoupons = config?.coupons?.length
+    ? config.coupons
+    : [{ code: 'INFOBYTE', percent: 40, label: 'InfoByte special — 40% off' }];
+  const discount = coupon ? round(totals.subtotal * (coupon.percent / 100)) : 0;
+  const taxableSubtotal = round(totals.subtotal - discount);
+  const tax = round(taxableSubtotal * (config?.taxRate ?? 0.05));
+  const finalTotal = round(taxableSubtotal + tax + totals.delivery);
+
+  const applyCoupon = () => {
+    const code = couponInput.trim().toUpperCase();
+    const match = availableCoupons.find((entry) => entry.code.toUpperCase() === code);
+    if (!code) {
+      setCouponError('Type the code first. The pizza cannot read your mind.');
+      return;
+    }
+    if (!match) {
+      setCouponError(`That code is not in the lab. Try INFOBYTE for 40% off.`);
+      return;
+    }
+    setCoupon(match);
+    setCouponError('');
+    setCouponInput(match.code);
+    toast(`${match.percent}% off applied. The maths department approves.`, { tone: 'success', title: match.code });
+  };
+
+  const removeCoupon = () => {
+    setCoupon(null);
+    setCouponInput('');
+    setCouponError('');
+  };
 
   const filled = useMemo(
     () => ['line1', 'city', 'state', 'pincode', 'phone'].every((field) => String(address[field] || '').trim()),
@@ -80,8 +116,22 @@ export default function CheckoutPage() {
     try {
       const data = await api('/orders', {
         method: 'POST',
-        body: { items: orderItems, deliveryAddress: address },
+        body: {
+          items: orderItems,
+          deliveryAddress: address,
+          paymentMethod: payMethod === 'cod' ? 'cod' : 'online',
+          couponCode: coupon?.code || '',
+        },
       });
+      if (payMethod === 'cod') {
+        clearCart();
+        toast('Order placed. Keep the cash ready for the delivery hero.', {
+          tone: 'success',
+          title: 'Cash on delivery',
+        });
+        navigate(`/orders/${data.order.id}?celebrate=1`);
+        return;
+      }
       setOrder(data.order);
       setPayment(data.payment);
       clearCart();
@@ -236,57 +286,136 @@ export default function CheckoutPage() {
                   <span className="checkout-panel__icon"><Lock size={18} /></span>
                   <div>
                     <h2>Payment</h2>
-                    <p>{payMode}. {config?.payments?.mode === 'razorpay' ? 'Razorpay checkout opens in a secure window.' : 'This demo never charges a real card.'}</p>
+                    <p>{payMethod === 'cod' ? 'Pay cash at your door. Demo order, no real money.' : `${payMode}. This demo never charges a real card.`}</p>
                   </div>
                   <span className="checkout-panel__pill"><ShieldCheck size={13} /> Secure</span>
                 </div>
-                <div className="checkout-pay-option">
-                  <span><CreditCard size={20} /></span>
-                  <div>
-                    <strong>{config?.payments?.mode === 'razorpay' ? 'UPI / Cards / Netbanking via Razorpay' : 'Demo UPI · simulated Razorpay'}</strong>
-                    <small>{config?.payments?.mode === 'razorpay' ? 'Test mode keys are configured on the server.' : 'Click pay to confirm instantly. No real money.'}</small>
-                  </div>
-                  <BadgeCheck size={18} />
+                <div className="checkout-pay-methods" role="radiogroup" aria-label="Payment method">
+                  <label className={`pay-method ${payMethod === 'online' ? 'is-active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="pay-method"
+                      value="online"
+                      checked={payMethod === 'online'}
+                      onChange={() => { setPayMethod('online'); setError(''); }}
+                    />
+                    <span className="pay-method__icon"><CreditCard size={18} /></span>
+                    <span className="pay-method__body">
+                      <strong>{config?.payments?.mode === 'razorpay' ? 'UPI / Cards via Razorpay' : 'Pay online · Demo UPI'}</strong>
+                      <small>
+                        {config?.payments?.mode === 'razorpay'
+                          ? 'Open the secure Razorpay window and confirm instantly.'
+                          : 'Simulated instant pay. Ingredient stock reserved right away.'}
+                      </small>
+                    </span>
+                    <span className="pay-method__tick"><BadgeCheck size={17} /></span>
+                  </label>
+                  <label className={`pay-method pay-method--cod ${payMethod === 'cod' ? 'is-active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="pay-method"
+                      value="cod"
+                      checked={payMethod === 'cod'}
+                      onChange={() => { setPayMethod('cod'); setError(''); }}
+                    />
+                    <span className="pay-method__icon"><Banknote size={18} /></span>
+                    <span className="pay-method__body">
+                      <strong>Cash on Delivery</strong>
+                      <small>Pay {formatINR(finalTotal)} in cash when your slice arrives. Demo mode.</small>
+                    </span>
+                    <span className="pay-method__tick"><BadgeCheck size={17} /></span>
+                  </label>
                 </div>
-                <div className="checkout-pay-option checkout-pay-option--muted">
-                  <span><Truck size={20} /></span>
-                  <div>
-                    <strong>{deliveryIsFree ? 'Free delivery unlocked' : 'Cash on delivery?'}</strong>
-                    <small>{deliveryIsFree ? 'Your order crossed the free-delivery threshold.' : 'We currently accept prepaid online orders only, so every pizza is tracked end to end.'}</small>
+                {payMethod === 'cod' ? (
+                  <div className="checkout-cod-note">
+                    <Truck size={16} />
+                    <p>Order fires into the kitchen immediately. Our rider collects {formatINR(finalTotal)} on arrival.</p>
                   </div>
-                </div>
+                ) : null}
               </section>
             </div>
 
             <aside className="checkout__summary">
               <div className="order-summary">
                 <h2>Order summary</h2>
+
+                <div className={`coupon-box ${coupon ? 'is-applied' : ''}`}>
+                  <div className="coupon-box__head">
+                    <TicketPercent size={15} />
+                    <span>{coupon ? 'Coupon applied' : 'Have a coupon?'}</span>
+                  </div>
+                  {coupon ? (
+                    <div className="coupon-box__applied">
+                      <div>
+                        <strong>{coupon.code}</strong>
+                        <small>{coupon.percent}% off · {coupon.label}</small>
+                      </div>
+                      <button type="button" onClick={removeCoupon} aria-label="Remove coupon"><X size={14} /></button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="coupon-box__form">
+                        <input
+                          value={couponInput}
+                          onChange={(event) => {
+                            setCouponInput(event.target.value.toUpperCase());
+                            setCouponError('');
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                              event.preventDefault();
+                              applyCoupon();
+                            }
+                          }}
+                          placeholder="INFOBYTE"
+                          aria-label="Coupon code"
+                        />
+                        <button type="button" onClick={applyCoupon}>Apply</button>
+                      </div>
+                      {couponError ? <p className="coupon-box__error">{couponError}</p> : null}
+                    </>
+                  )}
+                </div>
+
                 <div className="cart-summary">
                   <div className="cart-summary__row">
                     <span>Subtotal</span><span>{formatINR(totals.subtotal)}</span>
                   </div>
+                  {discount > 0 ? (
+                    <div className="cart-summary__row cart-summary__row--discount">
+                      <span>Coupon ({coupon.code})</span><span>-{formatINR(discount)}</span>
+                    </div>
+                  ) : null}
                   <div className="cart-summary__row">
-                    <span>Taxes ({Math.round((config?.taxRate ?? 0.05) * 100)}%)</span><span>{formatINR(totals.tax)}</span>
+                    <span>Taxes ({Math.round((config?.taxRate ?? 0.05) * 100)}%)</span><span>{formatINR(tax)}</span>
                   </div>
                   <div className="cart-summary__row">
                     <span>Delivery</span><span>{deliveryIsFree ? 'Free' : formatINR(totals.delivery)}</span>
                   </div>
                   {totals.amountToFreeDelivery > 0 ? (
-                    <p className="order-summary__nudge">Add {formatINR(totals.amountToFreeDelivery)} for free delivery.</p>
-                  ) : null}
+                    <p className="order-summary__nudge">Add {formatINR(totals.amountToFreeDelivery)} more for free delivery (below {formatINR(totals.deliveryThreshold)}).</p>
+                  ) : (
+                    <p className="order-summary__nudge order-summary__nudge--free">Free delivery unlocked on orders over {formatINR(totals.deliveryThreshold)} 🎉</p>
+                  )}
                   <div className="cart-summary__row cart-summary__row--total">
-                    <span>Total</span><span>{formatINR(totals.total)}</span>
+                    <span>Total</span><span>{formatINR(finalTotal)}</span>
                   </div>
                 </div>
 
                 {error ? <p className="form-error"><AlertCircle size={14} /> {error}</p> : null}
 
                 <button className="btn btn--block btn--lg" type="submit" disabled={submitting || !items.length || !user?.isVerified}>
-                  {submitting ? <Loader2 size={17} className="spin" /> : <Lock size={16} />}
-                  {submitting ? 'Creating your order…' : `Pay ${formatINR(totals.total)}`}
+                  {submitting ? <Loader2 size={17} className="spin" /> : payMethod === 'cod' ? <Banknote size={16} /> : <Lock size={16} />}
+                  {submitting
+                    ? 'Creating your order…'
+                    : payMethod === 'cod'
+                      ? `Place COD order · ${formatINR(finalTotal)}`
+                      : `Pay ${formatINR(finalTotal)}`}
                 </button>
                 <p className="order-summary__fine">
-                  Placing the order creates a 30-minute payment window. Ingredients are reserved only after payment succeeds.
+                  {payMethod === 'cod'
+                    ? 'Demo cash on delivery: the order enters the kitchen right away and cash is collected at your door.'
+                    : 'Placing the order creates a 30-minute payment window. Ingredients are reserved only after payment succeeds.'}
                 </p>
                 <div className="order-summary__trust">
                   <span><ShieldCheck size={13} /> Server-verified pricing</span>

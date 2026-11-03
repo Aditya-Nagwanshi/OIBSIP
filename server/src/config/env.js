@@ -15,12 +15,14 @@ if (isProduction && jwtSecret.includes('change-me')) {
   throw new Error('Refusing to start in production with the example JWT_SECRET.');
 }
 
+const clientUrl = process.env.CLIENT_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:5173';
+
 export const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
   isProduction,
   port: Number(process.env.PORT || 5000),
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
-  clientUrls: (process.env.CLIENT_URL || 'http://localhost:5173')
+  clientUrl,
+  clientUrls: clientUrl
     .split(',')
     .map((value) => value.trim())
     .filter(Boolean),

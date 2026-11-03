@@ -43,6 +43,13 @@ const actionLabel = {
   cancelled: 'Cancel order',
 };
 
+const paymentLabel = (order) => {
+  if (order.payment.provider === 'cod') {
+    return order.payment.status === 'paid' ? 'COD · collected' : 'COD · on delivery';
+  }
+  return order.payment.status === 'paid' ? 'Paid' : 'Payment pending';
+};
+
 function AdminOrderModal({ orderId, onClose, onUpdated }) {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -126,6 +133,9 @@ function AdminOrderModal({ orderId, onClose, onUpdated }) {
               </div>
               <div className="admin-order-totals">
                 <span>Subtotal <strong>{formatINR(order.pricing.subtotal)}</strong></span>
+                {order.pricing.discount > 0 ? (
+                  <span className="is-discount">Coupon {order.pricing.couponCode} <strong>-{formatINR(order.pricing.discount)}</strong></span>
+                ) : null}
                 <span>Tax <strong>{formatINR(order.pricing.tax)}</strong></span>
                 <span>Delivery <strong>{order.pricing.deliveryFee === 0 ? 'Free' : formatINR(order.pricing.deliveryFee)}</strong></span>
                 <span className="is-total">Total <strong>{formatINR(order.pricing.total)}</strong></span>
@@ -136,8 +146,8 @@ function AdminOrderModal({ orderId, onClose, onUpdated }) {
               <div className="admin-pay-card">
                 <CircleDollarSign size={20} />
                 <div>
-                  <strong>{order.payment.status === 'paid' ? 'Paid' : 'Pending'}</strong>
-                  <small>{order.payment.provider === 'razorpay' ? 'Razorpay' : 'Demo checkout'} · {formatINR(order.payment.amount)}</small>
+                  <strong>{order.payment.provider === 'cod' && order.payment.status !== 'paid' ? 'Collect on delivery' : order.payment.status === 'paid' ? 'Paid' : 'Pending'}</strong>
+                  <small>{order.payment.provider === 'cod' ? 'Cash on delivery (demo)' : order.payment.provider === 'razorpay' ? 'Razorpay' : 'Demo checkout'} · {formatINR(order.payment.amount)}</small>
                   {order.payment.paidAt ? <small>{formatDate(order.payment.paidAt)}</small> : null}
                 </div>
               </div>
@@ -297,7 +307,7 @@ export default function AdminOrdersPage() {
                 <tbody>
                   {orders.map((order) => (
                     <tr key={order.id} onClick={() => setSelected(order.id)}>
-                      <td><strong>{order.orderNumber}</strong><small>{order.payment.status === 'paid' ? 'Paid' : 'Payment pending'}</small></td>
+                      <td><strong>{order.orderNumber}</strong><small>{paymentLabel(order)}</small></td>
                       <td><strong>{order.customer?.name || 'Guest'}</strong><small>{order.customer?.email}</small></td>
                       <td>{order.items.reduce((sum, item) => sum + item.quantity, 0)} item(s)<small>{order.items.map((item) => item.name).join(', ').slice(0, 42)}</small></td>
                       <td><strong>{formatINR(order.pricing.total)}</strong></td>

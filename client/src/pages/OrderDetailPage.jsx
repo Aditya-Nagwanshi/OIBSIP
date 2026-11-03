@@ -31,7 +31,7 @@ import StatusBadge from '../components/ui/StatusBadge';
 import PaymentSheet from '../components/checkout/PaymentSheet';
 
 const TRACK_STEPS = [
-  { key: 'received', label: 'Order received', copy: 'Payment confirmed, ticket printed.', icon: ReceiptText },
+  { key: 'received', label: 'Order received', copy: 'Ticket printed, oven queued.', icon: ReceiptText },
   { key: 'in_kitchen', label: 'In the kitchen', copy: 'Dough stretched, oven at 450°C.', icon: ChefHat },
   { key: 'out_for_delivery', label: 'Out for delivery', copy: 'Box sealed, rider on the move.', icon: Truck },
   { key: 'delivered', label: 'Delivered', copy: 'The theory has been tested.', icon: PackageCheck },
@@ -192,9 +192,15 @@ export default function OrderDetailPage() {
               animate={{ y: 0, scale: 1, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 240, damping: 20 }}
             >
-              <span className="celebration__icon"><Flame size={24} /></span>
-              <h2>Payment confirmed.</h2>
-              <p>The kitchen has your ticket. Your pizza is officially in the queue.</p>
+              <span className="celebration__icon">
+                {order?.payment?.provider === 'cod' ? <Truck size={24} /> : <Flame size={24} />}
+              </span>
+              <h2>{order?.payment?.provider === 'cod' ? 'Order placed.' : 'Payment confirmed.'}</h2>
+              <p>
+                {order?.payment?.provider === 'cod'
+                  ? 'Cash on delivery locked in. Have the exact change ready — the kitchen has your ticket.'
+                  : 'The kitchen has your ticket. Your pizza is officially in the queue.'}
+              </p>
             </motion.div>
           </motion.div>
         ) : null}
@@ -354,6 +360,11 @@ export default function OrderDetailPage() {
                 <h2><ReceiptText size={17} /> Receipt</h2>
                 <div className="cart-summary">
                   <div className="cart-summary__row"><span>Subtotal</span><span>{formatINR(order.pricing.subtotal)}</span></div>
+                  {order.pricing.discount > 0 ? (
+                    <div className="cart-summary__row cart-summary__row--discount">
+                      <span>Coupon {order.pricing.couponCode}</span><span>-{formatINR(order.pricing.discount)}</span>
+                    </div>
+                  ) : null}
                   <div className="cart-summary__row"><span>Taxes</span><span>{formatINR(order.pricing.tax)}</span></div>
                   <div className="cart-summary__row"><span>Delivery</span><span>{order.pricing.deliveryFee === 0 ? 'Free' : formatINR(order.pricing.deliveryFee)}</span></div>
                   <div className="cart-summary__row cart-summary__row--total"><span>Total</span><span>{formatINR(order.pricing.total)}</span></div>
@@ -363,7 +374,7 @@ export default function OrderDetailPage() {
                     {order.payment.status === 'paid' ? <Check size={13} /> : <Clock3 size={13} />}
                     {order.payment.status === 'paid' ? 'Paid' : 'Pending'}
                   </span>
-                  <span>{order.payment.provider === 'razorpay' ? 'Razorpay' : 'Demo checkout'} · {formatINR(order.payment.amount)}</span>
+                  <span>{order.payment.provider === 'razorpay' ? 'Razorpay' : order.payment.provider === 'cod' ? 'Cash on delivery' : 'Demo checkout'} · {formatINR(order.payment.amount)}</span>
                   {order.payment.paidAt ? <small>{formatDate(order.payment.paidAt)}</small> : null}
                 </div>
                 <button className="btn btn--ghost btn--block" onClick={() => fetchOrder()}><RefreshCw size={14} /> Refresh status</button>

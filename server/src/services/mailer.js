@@ -144,7 +144,7 @@ export function lowStockEmail({ items, figure }) {
   };
 }
 
-export function orderConfirmedEmail({ order, name }) {
+export function orderConfirmedEmail({ order, name, cod = false }) {
   const rows = order.items
     .map(
       (item) =>
@@ -155,8 +155,12 @@ export function orderConfirmedEmail({ order, name }) {
     )
     .join('');
 
+  const totalLabel = cod ? 'Payable on delivery (cash)' : 'Total paid';
+
   return {
-    subject: `Order ${order.orderNumber} confirmed — we're firing up the oven`,
+    subject: cod
+      ? `Order ${order.orderNumber} confirmed — pay cash when your pizza arrives`
+      : `Order ${order.orderNumber} confirmed — we're firing up the oven`,
     html: layout({
       title: 'Order confirmed',
       preheader: `Order ${order.orderNumber} is in the kitchen.`,
@@ -164,13 +168,15 @@ export function orderConfirmedEmail({ order, name }) {
         <h1 style="font-size:28px;line-height:1.15;margin:0 0 8px;">Your pizza is official.</h1>
         <p style="font-size:15px;line-height:1.7;color:#5c4a60;">Thanks ${escapeHtml(name || 'friend')} — order <strong>${escapeHtml(
         order.orderNumber
-      )}</strong> has been received and is heading to the kitchen.</p>
+      )}</strong> has been received and is heading to the kitchen.${cod ? ' Keep ₹' + order.pricing.total.toFixed(0) + ' in cash ready for our delivery hero.' : ''}</p>
         <table style="width:100%;border-collapse:collapse;font-size:14px;margin:22px 0;">${rows}
-          <tr><td style="padding:12px 8px;font-weight:800;">Total paid</td>
+          <tr><td style="padding:12px 8px;font-weight:800;">${totalLabel}</td>
           <td style="padding:12px 8px;text-align:right;font-weight:800;">₹${order.pricing.total.toFixed(0)}</td></tr>
         </table>
         <p style="margin:26px 0;">${button(`${env.clientUrls[0]}/orders/${order._id || order.id}`, 'Track my order')}</p>`,
     }),
-    text: `Order ${order.orderNumber} confirmed. Total ₹${order.pricing.total.toFixed(0)}.`,
+    text: cod
+      ? `Order ${order.orderNumber} confirmed. Cash on delivery: ₹${order.pricing.total.toFixed(0)}.`
+      : `Order ${order.orderNumber} confirmed. Total ₹${order.pricing.total.toFixed(0)}.`,
   };
 }

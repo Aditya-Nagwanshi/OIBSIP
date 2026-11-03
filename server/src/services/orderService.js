@@ -4,7 +4,7 @@ import { Pizza } from '../models/Pizza.js';
 import { InventoryItem } from '../models/InventoryItem.js';
 import { User } from '../models/User.js';
 import { HttpError } from '../utils/httpError.js';
-import { roundMoney, SIZE_LABELS, SIZE_MULTIPLIERS, TAX_RATE, DELIVERY_FEE, FREE_DELIVERY_THRESHOLD } from '../utils/money.js';
+import { roundMoney, SIZE_LABELS, SIZE_MULTIPLIERS, TAX_RATE, DELIVERY_FEE, FREE_DELIVERY_THRESHOLD, resolveCoupon } from '../utils/money.js';
 import { reserveStock, restoreStock, checkLowStockAndNotify } from './inventoryService.js';
 import { emitToAdmins, emitToUser } from './socket.js';
 import { orderConfirmedEmail, sendMail } from './mailer.js';
@@ -150,7 +150,7 @@ async function buildCustomItem(payload) {
     kind: 'custom',
     name: 'Build Your Own',
     description: descriptionParts.join(' · '),
-    image: '/media/margherita.webp',
+    image: '/media/pizzas/margherita.webp',
     size,
     sizeLabel: SIZE_LABELS[size],
     quantity,
@@ -184,17 +184,31 @@ export async function buildOrderItems(rawItems) {
   return items;
 }
 
-export function priceOrder(items) {
+export function priceOrder(items, couponCode = '') {
   const subtotal = roundMoney(items.reduce((sum, item) => sum + item.lineTotal, 0));
-  const tax = roundMoney(subtotal * TAX_RATE);
+  const coupon = resolveCoupon(couponCode);
+  if (String(couponCode || '').trim() && !coupon) {
+    throw new HttpError(422, 'That coupon code is not valid. Try INFOBYTE for 40% off.', undefined, 'INVALID_COUPON');
+  }
+  const discount = coupon ? roundMoney(subtotal * (coupon.percent / 100)) : 0;
+  const taxable = Math.max(0, roundMoney(subtotal - discount));
+  const tax = roundMoney(taxable * TAX_RATE);
   const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
-  const total = roundMoney(subtotal + tax + deliveryFee);
-  return { subtotal, tax, deliveryFee, discount: 0, total };
+  const total = roundMoney(taxable + tax + deliveryFee);
+  return {
+    subtotal,
+    tax,
+    deliveryFee,
+    discount,
+    couponCode: coupon?.code || '',
+    total,
+  };
 }
 
-export async function createDraftOrder({ user, items: rawItems, deliveryAddress }) {
+export async function createDraftOrder({ user, items: rawItems, deliveryAddress, paymentMethod = 'online', couponCode = '' }) {
   const items = await buildOrderItems(rawItems);
-  const pricing = priceOrder(items);
+  const pricing = priceOrder(items, couponCode);
+  const isCod = paymentMethod === 'cod';
   const address = {
     line1: cleanText(deliveryAddress.line1, 160),
     line2: cleanText(deliveryAddress.line2, 160),
@@ -221,24 +235,65 @@ export async function createDraftOrder({ user, items: rawItems, deliveryAddress 
     items,
     pricing,
     deliveryAddress: address,
-    status: 'payment_pending',
+    status: isCod ? 'received' : 'payment_pending',
     payment: {
-      provider: env.paymentsMode === 'razorpay' ? 'razorpay' : 'mock',
+      provider: isCod ? 'cod' : env.paymentsMode === 'razorpay' ? 'razorpay' : 'mock',
       status: 'pending',
       amount: pricing.total,
       currency: env.currency,
+      note: isCod ? 'Cash on delivery — collect at the door.' : '',
     },
-    paymentExpiresAt: new Date(Date.now() + PAYMENT_WINDOW_MS),
+    paymentExpiresAt: isCod ? null : new Date(Date.now() + PAYMENT_WINDOW_MS),
   });
+
+  if (isCod) {
+    await confirmCodOrder(order);
+  }
 
   return order;
 }
 
-async function sendConfirmation(order) {
+async function confirmCodOrder(order) {
+  const allRecipeLines = (order.items || []).flatMap((item) => item.recipe);
+
+  if (allRecipeLines.length) {
+    await reserveStock(allRecipeLines);
+  }
+
+  try {
+    order.status = 'received';
+    order.payment.provider = 'cod';
+    order.payment.status = 'pending';
+    order.payment.cod = true;
+    order.estimatedDeliveryAt = new Date(Date.now() + 35 * 60 * 1000);
+    order.timeline.push({
+      status: 'received',
+      label: STATUS_LABELS.received,
+      note: 'Order confirmed · cash on delivery. Keep the change ready.',
+    });
+    await order.save();
+  } catch (error) {
+    if (allRecipeLines.length) {
+      await restoreStock(allRecipeLines).catch((restoreError) =>
+        console.error('[order] Failed to restore stock after COD save error:', restoreError.message)
+      );
+    }
+    throw error;
+  }
+
+  const publicOrder = order.toPublic();
+  emitToUser(order.user, 'order:updated', { order: publicOrder });
+  emitToUser(order.user, 'order:created', { order: publicOrder });
+  emitToAdmins('order:new', { order: publicOrder });
+
+  sendConfirmation(order, { cod: true });
+}
+
+async function sendConfirmation(order, { cod = false } = {}) {
   try {
     const user = await User.findById(order.user).lean();
     if (!user) return;
-    const email = orderConfirmedEmail({ order, name: user.name });
+    const email = orderConfirmedEmail({ order, name: user.name, cod });
     await sendMail({ to: user.email, subject: email.subject, html: email.html, text: email.text });
   } catch (error) {
     console.error('[order] Confirmation email failed:', error.message);
@@ -344,7 +399,7 @@ export async function updateOrderStatus({ order, status, note }) {
 
   if (status === 'cancelled') {
     order.cancelReason = cleanText(note, 240) || 'Cancelled by the Slice Theory team.';
-    if (order.payment.status === 'paid') {
+    if (order.payment.status === 'paid' || order.payment.provider === 'cod') {
       const lines = order.items.flatMap((item) => item.recipe);
       await restoreStock(lines);
     }
@@ -352,6 +407,15 @@ export async function updateOrderStatus({ order, status, note }) {
 
   if (status === 'delivered') {
     order.estimatedDeliveryAt = new Date();
+    if (order.payment.provider === 'cod' && order.payment.status === 'pending') {
+      order.payment.status = 'paid';
+      order.payment.paidAt = new Date();
+      order.timeline.push({
+        status: 'delivered',
+        label: 'Cash collected',
+        note: 'Cash on delivery collected. The theory is complete.',
+      });
+    }
   }
 
   await order.save();

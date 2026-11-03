@@ -98,7 +98,7 @@ export function CartProvider({ children }) {
         kind: 'custom',
         name: 'Build Your Own',
         description: toppings.map((option) => option.name).join(' · '),
-        image: '/media/margherita.webp',
+        image: '/media/pizzas/margherita.webp',
         size: selectedSize.id,
         sizeLabel: selectedSize.label,
         quantity: build.quantity || 1,

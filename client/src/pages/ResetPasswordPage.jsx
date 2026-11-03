@@ -48,7 +48,7 @@ export default function ResetPasswordPage() {
       title="A fresh"
       accent="start."
       subtitle="Choose a strong password with at least eight characters, one letter and one number."
-      image="/media/margherita.webp"
+      image="/media/pizzas/margherita.webp"
       quote="“Every good theory deserves a second trial.”"
       footer={<p><Link to="/login">Back to sign in</Link></p>}
     >

@@ -19,15 +19,30 @@ const addressSchema = z.object({
 const createOrderSchema = z.object({
   items: z.array(z.object({ kind: z.enum(['preset', 'custom']) }).passthrough()).min(1).max(12),
   deliveryAddress: addressSchema,
+  paymentMethod: z.enum(['online', 'cod']).default('online'),
+  couponCode: z.string().trim().max(24).optional().default(''),
 });
 
 export const createOrder = asyncHandler(async (req, res) => {
   const data = parseBody(createOrderSchema, req.body);
+  const isCod = data.paymentMethod === 'cod';
+
   const order = await createDraftOrder({
     user: req.user,
     items: data.items,
     deliveryAddress: data.deliveryAddress,
+    paymentMethod: data.paymentMethod,
+    couponCode: data.couponCode,
   });
+
+  if (isCod) {
+    res.status(201).json({
+      message: 'Order confirmed. Pay cash when your pizza arrives.',
+      order: order.toPublic(),
+      payment: null,
+    });
+    return;
+  }
 
   const payment = await createPaymentIntent(order);
 

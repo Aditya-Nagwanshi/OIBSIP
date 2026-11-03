@@ -38,7 +38,7 @@ const orderItemSchema = new mongoose.Schema(
     pizza: { type: mongoose.Schema.Types.ObjectId, ref: 'Pizza' },
     name: { type: String, required: true },
     description: { type: String, default: '' },
-    image: { type: String, default: '/media/margherita.webp' },
+    image: { type: String, default: '/media/pizzas/margherita.webp' },
     size: { type: String, enum: ['regular', 'medium', 'large'], default: 'medium' },
     sizeLabel: { type: String, default: 'Medium 11"' },
     quantity: { type: Number, required: true, min: 1, max: 10 },
@@ -75,6 +75,7 @@ const orderSchema = new mongoose.Schema(
       tax: { type: Number, required: true },
       deliveryFee: { type: Number, required: true },
       discount: { type: Number, default: 0 },
+      couponCode: { type: String, default: '' },
       total: { type: Number, required: true },
     },
     deliveryAddress: {
@@ -88,7 +89,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: { type: String, enum: ORDER_STATUSES, default: 'payment_pending', index: true },
     payment: {
-      provider: { type: String, enum: ['mock', 'razorpay'], default: 'mock' },
+      provider: { type: String, enum: ['mock', 'razorpay', 'cod'], default: 'mock' },
       status: {
         type: String,
         enum: ['pending', 'paid', 'failed', 'refunded'],
@@ -96,6 +97,8 @@ const orderSchema = new mongoose.Schema(
       },
       razorpayOrderId: { type: String, default: '' },
       razorpayPaymentId: { type: String, default: '' },
+      cod: { type: Boolean, default: false },
+      note: { type: String, default: '' },
       amount: { type: Number, required: true },
       currency: { type: String, default: 'INR' },
       paidAt: { type: Date },

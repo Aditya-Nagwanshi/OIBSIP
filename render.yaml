@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: slice-theory
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm run install:all && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_URL
+        fromService:
+          name: slice-theory
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: ADMIN_EMAIL
+        value: Demo_SliceTheory@pizza
+      - key: PAYMENTS_MODE
+        value: mock
+      - key: CURRENCY
+        value: INR
+      - key: SEED_ON_START
+        value: "true"

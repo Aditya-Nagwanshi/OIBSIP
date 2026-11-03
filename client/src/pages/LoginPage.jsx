@@ -71,7 +71,7 @@ export default function LoginPage() {
       title="Good to see you,"
       accent="theorist."
       subtitle="Sign in to reorder favourites, track the oven and keep your theories in one place."
-      image="/media/margherita.webp"
+      image="/media/pizzas/margherita.webp"
       quote="“I came for the crust. I stayed for the live order tracker.”"
       footer={
         <p>New around here? <Link to={next ? `/register?next=${encodeURIComponent(next)}` : '/register'}>Create an account</Link></p>

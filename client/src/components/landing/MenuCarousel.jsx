@@ -1,9 +1,10 @@
 ﻿import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Flame, Plus, ShieldCheck, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, Star } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useToast } from '../../contexts/ToastContext';
 import { formatINR } from '../../lib/format';
+import TiltCard from '../system/TiltCard';
 
 function SkeletonCard() {
   return (
@@ -32,7 +33,7 @@ export default function MenuCarousel({ pizzas, loading }) {
         let offset = index - active;
         if (offset > count / 2) offset -= count;
         if (offset < -count / 2) offset += count;
-        return { pizza, offset };
+        return { pizza, offset, index };
       })
       .sort((a, b) => Math.abs(a.offset) - Math.abs(b.offset));
   }, [pizzas, active, count]);
@@ -43,7 +44,7 @@ export default function MenuCarousel({ pizzas, loading }) {
   };
 
   const handlePointerDown = (event) => {
-    dragStart.current = { x: event.clientX, moved: false };
+    dragStart.current = { x: event.clientX };
   };
 
   const handlePointerUp = (event) => {
@@ -59,19 +60,17 @@ export default function MenuCarousel({ pizzas, loading }) {
   };
 
   return (
-    <section className="section menu-carousel" id="menu">
+    <section className="lux-section menu-carousel" id="menu">
       <div className="container">
-        <div className="section-heading section-heading--split">
+        <div className="lux-head lux-head--split">
           <div>
-            <p className="eyebrow">Fresh from the lab</p>
-            <h2>
-              Our menu of <em>possibilities.</em>
-            </h2>
+            <p className="lux-eyebrow"><span className="lux-eyebrow__line" /> Fresh from the lab</p>
+            <h2 className="lux-h2">The usual <em>suspects.</em></h2>
           </div>
-          <div className="section-heading__aside">
-            <p>Six signature theories, endless combinations. Swipe through the favourites and pick a side of happiness.</p>
-            <Link to="/menu" className="link-arrow">
-              Full menu <ArrowRight size={15} />
+          <div className="lux-head__aside">
+            <p>Five signature theories, endless combinations. Swipe through the favourites. One of them will start a group chat.</p>
+            <Link to="/menu" className="lux-textlink">
+              Explore the full menu <ArrowRight size={15} />
             </Link>
           </div>
         </div>
@@ -85,16 +84,16 @@ export default function MenuCarousel({ pizzas, loading }) {
           }}
         >
           <button className="carousel-nav carousel-nav--prev" onClick={() => go(-1)} aria-label="Previous pizza" disabled={!count}>
-            <ArrowLeft size={19} />
+            <ArrowLeft size={18} />
           </button>
           <button className="carousel-nav carousel-nav--next" onClick={() => go(1)} aria-label="Next pizza" disabled={!count}>
-            <ArrowRight size={19} />
+            <ArrowRight size={18} />
           </button>
 
           <div className="carousel-stage">
             {loading
               ? [0, 1, 2].map((key) => <SkeletonCard key={key} />)
-              : ordered.map(({ pizza, offset }) => {
+              : ordered.map(({ pizza, offset, index }) => {
                   const isActive = offset === 0;
                   const abs = Math.abs(offset);
                   return (
@@ -108,13 +107,13 @@ export default function MenuCarousel({ pizzas, loading }) {
                       }}
                       onClick={() => setActive(pizzas.findIndex((entry) => entry.id === pizza.id))}
                     >
-                      <div className="carousel-card__media">
-                        <span className={`pip ${pizza.isVegetarian ? 'pip--veg' : 'pip--nonveg'}`} aria-label={pizza.isVegetarian ? 'Vegetarian' : 'Non-vegetarian'}>
-                          <span />
+                      <TiltCard className="carousel-card__tilt" max={5}>
+                        <div className="carousel-card__media">
+                        <span className={`diet-tag ${pizza.isVegetarian ? 'diet-tag--veg' : 'diet-tag--nonveg'}`}>
+                          <span className="diet-tag__mark" aria-hidden="true" />
+                          {pizza.isVegetarian ? 'Veg' : 'Non-veg'}
                         </span>
-                        <span className="carousel-card__badge">
-                          <Flame size={12} /> {pizza.badges?.[0] || 'Signature'}
-                        </span>
+                        <span className="carousel-card__index">{String(index + 1).padStart(2, '0')}</span>
                         <img src={pizza.image} alt={pizza.name} loading="lazy" />
                         {isActive ? (
                           <button
@@ -125,15 +124,16 @@ export default function MenuCarousel({ pizzas, loading }) {
                               if (pizza.canOrder) add(pizza);
                             }}
                           >
-                            <Plus size={18} /> {pizza.canOrder ? 'Add to cart' : 'Sold out'}
+                            <Plus size={17} /> {pizza.canOrder ? 'Add to cart' : 'Sold out'}
                           </button>
                         ) : null}
                       </div>
+
                       <div className="carousel-card__body">
                         <div className="carousel-card__title-row">
                           <h3>{pizza.name}</h3>
-                          <span className="rating">
-                            <Star size={12} fill="currentColor" /> {pizza.rating?.toFixed?.(1) || '4.8'}
+                          <span className="carousel-card__rating">
+                            <Star size={11} fill="currentColor" /> {pizza.rating?.toFixed?.(1) || '4.8'}
                           </span>
                         </div>
                         <p className="carousel-card__desc">{pizza.description}</p>
@@ -145,17 +145,16 @@ export default function MenuCarousel({ pizzas, loading }) {
                           <span>Hand stretched</span>
                         </div>
                         <div className="carousel-card__foot">
-                          <div className="price">
+                          <div className="carousel-card__price">
                             <small>From</small>
                             <strong>{formatINR(pizza.basePrice)}</strong>
                           </div>
-                          {pizza.isVegetarian ? (
-                            <span className="carousel-card__note"><ShieldCheck size={13} /> 100% veg</span>
-                          ) : (
-                            <span className="carousel-card__note">Chef&apos;s signature</span>
-                          )}
+                          <span className={`carousel-card__note ${pizza.isVegetarian ? 'is-veg' : 'is-nonveg'}`}>
+                            {pizza.isVegetarian ? 'Garden pick' : "Chef's signature"}
+                          </span>
                         </div>
                       </div>
+                      </TiltCard>
                     </article>
                   );
                 })}
@@ -175,11 +174,11 @@ export default function MenuCarousel({ pizzas, loading }) {
 
         {current ? (
           <p className="carousel-caption">
-            <strong>{current.name}</strong> — {current.tagline || 'A very good theory.'}
+            <strong>{current.name}</strong>
+            <span>{current.tagline || 'Scientifically, a good idea.'}</span>
           </p>
         ) : null}
       </div>
     </section>
   );
 }
-

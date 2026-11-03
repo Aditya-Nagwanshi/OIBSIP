@@ -35,3 +35,8 @@ Thumbs.db
 
 # Large local source footage (not needed to run the app)
 /1101 (1).mp4
+/1103.mp4
+
+# Accidental local MongoDB log files
+/Slice
+/Slice.*

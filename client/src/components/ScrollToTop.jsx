@@ -5,15 +5,26 @@ export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    const lenis = window.__sliceLenis;
+
     if (hash) {
       const timer = setTimeout(() => {
         const target = document.getElementById(hash.slice(1));
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        else window.scrollTo({ top: 0 });
+        if (target) {
+          if (lenis) lenis.scrollTo(target, { offset: -90 });
+          else target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else if (lenis) {
+          lenis.scrollTo(0, { immediate: true });
+        } else {
+          window.scrollTo({ top: 0 });
+        }
       }, 80);
       return () => clearTimeout(timer);
     }
-    window.scrollTo({ top: 0, left: 0 });
+
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo({ top: 0, left: 0 });
+
     return undefined;
   }, [pathname, hash]);
 

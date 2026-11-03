@@ -40,40 +40,34 @@ const inventory = [
 
 const pizzas = [
   {
-    slug: 'classic-margherita', name: 'Classic Margherita', tagline: 'The one that started it all', description: 'Slow-cooked tomato, milky mozzarella and fresh basil on a hand-tossed crust.',
-    image: '/media/margherita.webp', accent: '#E7334A', basePrice: 299, rating: 4.9, reviewsCount: 2140, isVegetarian: true, spiceLevel: 0,
+    slug: 'classic-margherita', name: 'Classic Margherita', tagline: 'The original. Still undefeated.', description: 'Slow-cooked tomato, milky mozzarella and fresh basil on a hand-tossed crust.',
+    image: '/media/pizzas/margherita.webp', accent: '#E7334A', basePrice: 299, rating: 4.9, reviewsCount: 2140, isVegetarian: true, spiceLevel: 0,
     badges: ['Bestseller', 'Vegetarian'], calories: 820, prepMinutes: 16, featured: true,
     recipe: [['classic-hand-tossed', 1], ['classic-tomato', 1], ['mozzarella', 1], ['fresh-basil', 1]],
   },
   {
-    slug: 'pepperoni-fiesta', name: 'Pepperoni Fiesta', tagline: 'Crispy cups, big pull', description: 'Double smoked pepperoni, molten mozzarella and a classic tomato base.',
-    image: '/media/pepperoni.webp', accent: '#D93A2B', basePrice: 399, rating: 4.8, reviewsCount: 1836, isVegetarian: false, spiceLevel: 1,
+    slug: 'pepperoni-fiesta', name: 'Pepperoni Fiesta', tagline: 'Crispy cups. Zero regrets.', description: 'Double smoked pepperoni, molten mozzarella and a classic tomato base.',
+    image: '/media/pizzas/pepperoni.webp', accent: '#D93A2B', basePrice: 399, rating: 4.8, reviewsCount: 1836, isVegetarian: false, spiceLevel: 1,
     badges: ['Fan favourite'], calories: 1080, prepMinutes: 18, featured: true,
     recipe: [['classic-hand-tossed', 1], ['classic-tomato', 1], ['mozzarella', 1], ['smoked-pepperoni', 2]],
   },
   {
-    slug: 'veggie-delight', name: 'Veggie Delight', tagline: 'Garden party on a crust', description: 'Basil pesto, onion, capsicum, sweet corn and forest mushrooms with mozzarella.',
-    image: '/media/margherita.webp', accent: '#4E8D3A', basePrice: 349, rating: 4.7, reviewsCount: 1275, isVegetarian: true, spiceLevel: 0,
+    slug: 'veggie-delight', name: 'Veggie Delight', tagline: 'A garden party with cheese.', description: 'Basil pesto, onion, capsicum, sweet corn and forest mushrooms with mozzarella.',
+    image: '/media/pizzas/veggie.webp', accent: '#4E8D3A', basePrice: 349, rating: 4.7, reviewsCount: 1275, isVegetarian: true, spiceLevel: 0,
     badges: ['Vegetarian', 'Fresh pick'], calories: 760, prepMinutes: 17, featured: true,
     recipe: [['thin-crust', 1], ['basil-pesto', 1], ['mozzarella', 1], ['red-onion', 1], ['capsicum', 1], ['sweet-corn', 1], ['mushroom', 1]],
   },
   {
-    slug: 'paneer-tikka', name: 'Paneer Tikka', tagline: 'Desi smoke, cheese pull', description: 'Tikka-marinated paneer, red onion, capsicum and mozzarella on classic dough.',
-    image: '/media/margherita.webp', accent: '#E85D2A', basePrice: 379, rating: 4.8, reviewsCount: 1512, isVegetarian: true, spiceLevel: 2,
+    slug: 'paneer-tikka', name: 'Paneer Tikka', tagline: 'Desi smoke. Big pull.', description: 'Tikka-marinated paneer, red onion, capsicum and mozzarella on classic dough.',
+    image: '/media/pizzas/paneer.webp', accent: '#E85D2A', basePrice: 379, rating: 4.8, reviewsCount: 1512, isVegetarian: true, spiceLevel: 2,
     badges: ['Vegetarian', 'Spicy-ish'], calories: 930, prepMinutes: 19, featured: false,
     recipe: [['classic-hand-tossed', 1], ['classic-tomato', 1], ['mozzarella', 1], ['paneer', 1], ['capsicum', 1], ['red-onion', 1]],
   },
   {
-    slug: 'chicken-fiesta', name: 'Chicken Fiesta', tagline: 'Smoky, saucy, stacked', description: 'Herb chicken, jalapeño, red onion and mozzarella over smoky BBQ sauce.',
-    image: '/media/pepperoni.webp', accent: '#8A4B22', basePrice: 449, rating: 4.9, reviewsCount: 1688, isVegetarian: false, spiceLevel: 2,
+    slug: 'chicken-fiesta', name: 'Chicken Fiesta', tagline: 'Smoky. Saucy. Slightly smug.', description: 'Herb chicken, jalapeño, red onion and mozzarella over smoky BBQ sauce.',
+    image: '/media/pizzas/chicken.webp', accent: '#8A4B22', basePrice: 449, rating: 4.9, reviewsCount: 1688, isVegetarian: false, spiceLevel: 2,
     badges: ['High protein', 'Chef pick'], calories: 1120, prepMinutes: 20, featured: false,
     recipe: [['cheese-burst', 1], ['smoky-bbq', 1], ['mozzarella', 1], ['herb-chicken', 2], ['jalapeno', 1], ['red-onion', 1]],
-  },
-  {
-    slug: 'four-cheese-dream', name: 'Four Cheese Dream', tagline: 'A blanket of molten cheese', description: 'Mozzarella, sharp cheddar, parmesan and smoked gouda on white alfredo.',
-    image: '/media/oven.webp', accent: '#D8A62E', basePrice: 429, rating: 4.7, reviewsCount: 940, isVegetarian: true, spiceLevel: 0,
-    badges: ['Vegetarian', 'Extra cheesy'], calories: 1180, prepMinutes: 18, featured: false,
-    recipe: [['thin-crust', 1], ['white-alfredo', 1], ['mozzarella', 1], ['sharp-cheddar', 1], ['parmesan', 1], ['four-cheese-blend', 1]],
   },
 ];
 

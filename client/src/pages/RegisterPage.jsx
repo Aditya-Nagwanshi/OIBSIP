@@ -57,7 +57,7 @@ export default function RegisterPage() {
         title="Check your"
         accent="inbox."
         subtitle={`We sent a verification link to ${form.email}. Verify within 24 hours to fire up your first order.`}
-        image="/media/pepperoni.webp"
+        image="/media/pizzas/veggie.webp"
         quote="“The dough waits 48 hours. Your inbox only needs 24.”"
         footer={<p>Already verified? <Link to="/login">Sign in</Link></p>}
       >
@@ -88,7 +88,7 @@ export default function RegisterPage() {
       title="Start your own"
       accent="theory."
       subtitle="One account for faster checkout, saved addresses and live order tracking."
-      image="/media/margherita.webp"
+      image="/media/pizzas/margherita.webp"
       quote="“Everyone has a theory about pizza. Ours is just better tested.”"
       footer={<p>Already a theorist? <Link to={next ? `/login?next=${encodeURIComponent(next)}` : '/login'}>Sign in</Link></p>}
     >

@@ -7,6 +7,7 @@ import { useCart } from '../contexts/CartContext';
 import { useToast } from '../contexts/ToastContext';
 import { useConfig } from '../contexts/ConfigContext';
 import { formatINR } from '../lib/format';
+import TiltCard from '../components/system/TiltCard';
 
 const filters = [
   { id: 'all', label: 'Everything' },
@@ -31,9 +32,11 @@ function PizzaCard({ pizza, config }) {
 
   return (
     <article className="menu-card">
-      <div className="menu-card__media">
-        <span className={`pip ${pizza.isVegetarian ? 'pip--veg' : 'pip--nonveg'}`}>
-          <span />
+      <TiltCard className="menu-card__tilt" max={6}>
+        <div className="menu-card__media">
+        <span className={`diet-tag ${pizza.isVegetarian ? 'diet-tag--veg' : 'diet-tag--nonveg'}`}>
+          <span className="diet-tag__mark" aria-hidden="true" />
+          {pizza.isVegetarian ? 'Veg' : 'Non-veg'}
         </span>
         {pizza.badges?.[0] ? <span className="menu-card__badge">{pizza.badges[0]}</span> : null}
         <img src={pizza.image} alt={pizza.name} loading="lazy" />
@@ -78,6 +81,7 @@ function PizzaCard({ pizza, config }) {
           </button>
         </div>
       </div>
+      </TiltCard>
     </article>
   );
 }
@@ -117,7 +121,7 @@ export default function MenuPage() {
               The full<br />
               <em>theory.</em>
             </h1>
-            <p>Six signature experiments, hand-stretched daily. Pick a favourite or start from scratch in the builder.</p>
+            <p>Five signature experiments, hand-stretched daily. Pick a favourite or start from scratch in the builder. The oven has opinions.</p>
           </div>
           <div className="menu-hero__aside">
             <div className="menu-hero__stamp">

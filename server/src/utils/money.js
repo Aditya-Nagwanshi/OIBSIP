@@ -14,4 +14,18 @@ export const SIZE_LABELS = {
 
 export const TAX_RATE = 0.05;
 export const DELIVERY_FEE = 49;
-export const FREE_DELIVERY_THRESHOLD = 999;
+export const FREE_DELIVERY_THRESHOLD = 599;
+
+export const COUPONS = {
+  INFOBYTE: {
+    code: 'INFOBYTE',
+    percent: 40,
+    label: 'InfoByte special — 40% off',
+  },
+};
+
+export function resolveCoupon(code) {
+  const normalized = String(code || '').trim().toUpperCase();
+  if (!normalized) return null;
+  return COUPONS[normalized] || null;
+}

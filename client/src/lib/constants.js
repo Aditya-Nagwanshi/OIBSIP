@@ -4,7 +4,8 @@ export const DEFAULT_CONFIG = {
   payments: { mode: 'mock', keyId: null },
   taxRate: 0.05,
   deliveryFee: 49,
-  freeDeliveryThreshold: 999,
+  freeDeliveryThreshold: 599,
+  coupons: [{ code: 'INFOBYTE', percent: 40, label: 'InfoByte special — 40% off' }],
   sizes: [
     { id: 'regular', multiplier: 0.85, label: 'Regular 8"' },
     { id: 'medium', multiplier: 1, label: 'Medium 11"' },

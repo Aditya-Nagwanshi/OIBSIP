@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
       title="Reset your"
       accent="slice."
       subtitle="Enter the email on your account and we will send a secure reset link. It stays valid for 30 minutes."
-      image="/media/pepperoni.webp"
+      image="/media/pizzas/pepperoni.webp"
       quote="“Forgetting a password is temporary. Forgetting this crust is impossible.”"
       footer={<p>Remembered it? <Link to="/login">Sign in</Link></p>}
     >

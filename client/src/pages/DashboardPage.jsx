@@ -7,6 +7,7 @@ import { formatDate, formatINR, initials, shortAddress, timeAgo } from '../lib/f
 import api from '../lib/api';
 import PageLoader from '../components/ui/PageLoader';
 import StatusBadge from '../components/ui/StatusBadge';
+import DashboardBand from '../components/dashboard/DashboardBand';
 import usePageTitle from '../hooks/usePageTitle';
 import { useToast } from '../contexts/ToastContext';
 
@@ -140,6 +141,11 @@ export default function DashboardPage() {
             <div><strong>{orders.length ? orders[0].items[0]?.name?.split(' ')[0] : '—'}</strong><span>Last theory</span></div>
           </div>
         </div>
+
+        <DashboardBand
+          firstName={user?.name?.split(' ')[0] || 'theorist'}
+          activeCount={stats.active}
+        />
 
         <div className="dashboard__grid">
           <div className="dashboard__orders">

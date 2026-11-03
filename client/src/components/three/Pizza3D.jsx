@@ -553,7 +553,7 @@ export default function Pizza3D({
   toppers = ['smoked-pepperoni', 'fresh-basil', 'black-olives', 'cherry-tomato'],
   autoRotate = true,
   showFloating = false,
-  fallbackImage = '/media/margherita.webp',
+  fallbackImage = '/media/pizzas/margherita.webp',
   className = '',
   cameraPosition = [0, 3.6, 5.6],
 }) {

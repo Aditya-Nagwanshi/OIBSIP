@@ -4,7 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { serializeInventoryItem, serializePizza } from '../utils/serializers.js';
 import { env } from '../config/env.js';
 import { paymentMode } from '../services/razorpayService.js';
-import { SIZE_LABELS, SIZE_MULTIPLIERS, TAX_RATE, DELIVERY_FEE, FREE_DELIVERY_THRESHOLD } from '../utils/money.js';
+import { SIZE_LABELS, SIZE_MULTIPLIERS, TAX_RATE, DELIVERY_FEE, FREE_DELIVERY_THRESHOLD, COUPONS } from '../utils/money.js';
 
 function canOrderPizza(pizza) {
   if (!pizza.isAvailable || !pizza.recipe?.length) return false;
@@ -65,6 +65,7 @@ export const publicConfig = asyncHandler(async (_req, res) => {
     taxRate: TAX_RATE,
     deliveryFee: DELIVERY_FEE,
     freeDeliveryThreshold: FREE_DELIVERY_THRESHOLD,
+    coupons: Object.values(COUPONS),
     sizes: Object.entries(SIZE_MULTIPLIERS).map(([id, multiplier]) => ({
       id,
       multiplier,

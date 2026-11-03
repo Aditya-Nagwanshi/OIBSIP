@@ -39,7 +39,7 @@ export default function VerifyEmailPage() {
           ? 'The lab has your details. You are signed in and ready to order.'
           : 'Hold on while we confirm that this inbox belongs to a fellow slice theorist.'
       }
-      image="/media/oven.webp"
+      image="/media/pizzas/four-cheese.webp"
       quote="“Verification is just a handshake. The pizza is the real conversation.”"
       footer={<p><Link to="/login">Back to sign in</Link> · <Link to="/menu">Browse the menu</Link></p>}
     >

@@ -539,67 +539,58 @@
   }
 
   .story-scroll {
-    height: 310vh;
+    height: 420vh;
   }
 
   .story-sticky {
-    min-height: 520px;
+    padding: calc(var(--header-height) + 10px) 0 84px;
   }
 
   .story-topline {
-    top: 14px;
-    font-size: 0.54rem;
-    letter-spacing: 0.1em;
+    padding-inline: 6px;
   }
 
-  .story-canvas-wrap {
-    padding: 56px 10px 150px;
-  }
-
-  .story-canvas {
-    width: 100%;
-    max-height: 56vh;
-  }
-
-  .story-copy__inner {
-    padding-bottom: 7vh;
+  .story-frame {
+    width: min(96vw, 560px);
+    border-width: 8px;
+    border-radius: 24px;
   }
 
   .story-chapter {
-    width: 100%;
-    padding: 15px 17px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+    padding: 13px 14px 12px;
     border-radius: 14px;
-    background: rgba(25, 11, 34, 0.78);
   }
 
   .story-chapter--right {
-    margin-left: 0;
+    left: 10px;
+    right: 10px;
   }
 
   .story-chapter h3 {
-    font-size: 1.45rem;
-    margin-bottom: 6px;
+    font-size: 1.3rem;
+    margin-bottom: 5px;
   }
 
-  .story-chapter p {
-    font-size: 0.72rem;
-    line-height: 1.5;
+  .story-chapter__copy {
+    font-size: 0.66rem;
+    max-height: 4.4em;
   }
 
   .story-chapter__num {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 
-  .story-progress {
-    left: 16px;
-    right: 16px;
-    bottom: 46px;
+  .story-rail {
+    margin-top: 14px;
   }
 
-  .story-skip {
-    right: 12px;
-    bottom: 12px;
-    font-size: 0.55rem;
+  .story-footer {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .reviews__grid {
@@ -1191,8 +1182,12 @@
     padding-left: 73px;
   }
 
-  .checkout-pay-option {
+  .pay-method {
     flex-wrap: wrap;
+  }
+
+  .pay-method__body {
+    flex: 1 1 100%;
   }
 
   /* Dashboard */
