@@ -31,9 +31,8 @@ function PizzaCard({ pizza, config }) {
   };
 
   return (
-    <article className="menu-card">
-      <TiltCard className="menu-card__tilt" max={6}>
-        <div className="menu-card__media">
+    <TiltCard as="article" className="menu-card" max={13} roll={3.5} lift={1.025}>
+      <div className="menu-card__media">
         <span className={`diet-tag ${pizza.isVegetarian ? 'diet-tag--veg' : 'diet-tag--nonveg'}`}>
           <span className="diet-tag__mark" aria-hidden="true" />
           {pizza.isVegetarian ? 'Veg' : 'Non-veg'}
@@ -81,8 +80,7 @@ function PizzaCard({ pizza, config }) {
           </button>
         </div>
       </div>
-      </TiltCard>
-    </article>
+    </TiltCard>
   );
 }
 

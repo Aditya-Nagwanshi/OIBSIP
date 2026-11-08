@@ -132,6 +132,13 @@ const fadeUp = {
   }),
 };
 
+const tiltHover = (index = 0) => ({
+  y: -7,
+  rotateX: 2.4,
+  rotateY: index % 2 === 0 ? -3 : 3,
+  transition: { type: 'spring', stiffness: 260, damping: 20 },
+});
+
 function ParallaxImage({ src, alt, className = '', distance = 16 }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -417,6 +424,8 @@ export default function LandingPage() {
                   custom={index}
                   initial="hidden"
                   whileInView="visible"
+                  whileHover={tiltHover(index)}
+                  style={{ transformPerspective: 900 }}
                   viewport={{ once: true, margin: '-80px' }}
                 >
                   <span className="lux-promise__number">{promise.number}</span>
@@ -438,6 +447,8 @@ export default function LandingPage() {
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
+            whileHover={tiltHover(0)}
+            style={{ transformPerspective: 1000 }}
             viewport={{ once: true, margin: '-80px' }}
           >
             <div className="lux-offer__copy">
@@ -465,6 +476,8 @@ export default function LandingPage() {
               custom={1}
               initial="hidden"
               whileInView="visible"
+              whileHover={tiltHover(1)}
+              style={{ transformPerspective: 900 }}
               viewport={{ once: true, margin: '-80px' }}
             >
               <span className="lux-tag lux-tag--cream">For the overthinkers</span>
@@ -479,6 +492,8 @@ export default function LandingPage() {
               custom={2}
               initial="hidden"
               whileInView="visible"
+              whileHover={tiltHover(2)}
+              style={{ transformPerspective: 900 }}
               viewport={{ once: true, margin: '-80px' }}
             >
               <span className="lux-tag">New drop</span>
@@ -587,6 +602,8 @@ export default function LandingPage() {
                   custom={index}
                   initial="hidden"
                   whileInView="visible"
+                  whileHover={tiltHover(index)}
+                  style={{ transformPerspective: 900 }}
                   viewport={{ once: true, margin: '-60px' }}
                 >
                   <span className="lux-feature__number">{feature.number}</span>
@@ -681,6 +698,8 @@ export default function LandingPage() {
                 custom={index}
                 initial="hidden"
                 whileInView="visible"
+                whileHover={tiltHover(index)}
+                style={{ transformPerspective: 900 }}
                 viewport={{ once: true, margin: '-60px' }}
               >
                 <Quote size={22} className="lux-review__quote" />

@@ -14,6 +14,11 @@
   --green: #1f9d6d;
   --green-deep: #167a52;
   --sky: #5b8def;
+  --mint: #8fe3c0;
+  --lemon: #ffe89a;
+  --accent: #7b4dff;
+  --accent-deep: #5a2bd6;
+  --accent-soft: #e9ddff;
   --muted: #75617f;
   --line: rgba(43, 18, 56, 0.12);
   --line-strong: rgba(43, 18, 56, 0.24);
@@ -21,8 +26,8 @@
   --shadow-sm: 0 2px 12px rgba(43, 18, 56, 0.07);
   --shadow-md: 0 18px 48px rgba(43, 18, 56, 0.11);
   --shadow-lg: 0 34px 90px rgba(43, 18, 56, 0.18);
-  --font-display: 'Bricolage Grotesque Variable', 'Trebuchet MS', sans-serif;
-  --font-body: 'Outfit Variable', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Unbounded Variable', 'Trebuchet MS', sans-serif;
+  --font-body: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif;
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 26px;

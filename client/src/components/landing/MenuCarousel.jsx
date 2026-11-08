@@ -107,7 +107,7 @@ export default function MenuCarousel({ pizzas, loading }) {
                       }}
                       onClick={() => setActive(pizzas.findIndex((entry) => entry.id === pizza.id))}
                     >
-                      <TiltCard className="carousel-card__tilt" max={5}>
+                      <TiltCard className="carousel-card__tilt" max={10} roll={2.5} lift={1.015}>
                         <div className="carousel-card__media">
                         <span className={`diet-tag ${pizza.isVegetarian ? 'diet-tag--veg' : 'diet-tag--nonveg'}`}>
                           <span className="diet-tag__mark" aria-hidden="true" />

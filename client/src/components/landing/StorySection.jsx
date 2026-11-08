@@ -82,6 +82,8 @@ export default function StorySection() {
                 custom={index}
                 initial="hidden"
                 whileInView="visible"
+                whileHover={{ y: -5, rotateX: 2, rotateY: index % 2 === 0 ? -2.5 : 2.5, rotate: index % 2 === 0 ? -1 : 1 }}
+                style={{ transformPerspective: 900 }}
                 viewport={{ once: true, margin: '-60px' }}
               >
                 <span className="lux-method__number">{step.number}</span>

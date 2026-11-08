@@ -4,9 +4,9 @@ export function PizzaMark({ size = 46 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
       <path d="M24 5 42 39.5c1.3 2.4-.7 5.2-3.3 4.2L24 36 9.3 43.7c-2.6 1-4.6-1.8-3.3-4.2L24 5Z" fill="currentColor" />
-      <path d="M24 36 38.7 43.7c2.6 1 4.6-1.8 3.3-4.2L26.9 12.6 24 36Z" fill="#ff3d81" />
+      <path d="M24 36 38.7 43.7c2.6 1 4.6-1.8 3.3-4.2L26.9 12.6 24 36Z" fill="#7b4dff" />
       <circle cx="21" cy="22" r="3.2" fill="#ffc53d" />
-      <circle cx="29.5" cy="31" r="2.6" fill="#ff3d81" />
+      <circle cx="29.5" cy="31" r="2.6" fill="#7b4dff" />
       <circle cx="18" cy="32" r="1.9" fill="#1f9d6d" />
       <circle cx="28" cy="18" r="2" fill="#1f9d6d" />
     </svg>
