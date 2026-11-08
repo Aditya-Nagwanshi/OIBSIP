@@ -25,7 +25,7 @@ const defaultForm = {
   unit: 'portion',
   lowStockThreshold: 15,
   emoji: '🍕',
-  color: '#FFC93C',
+  color: '#ffc53d',
   isAvailable: true,
 };
 
@@ -40,7 +40,7 @@ function InventoryModal({ item, onClose, onSaved }) {
     unit: item.unit || 'unit',
     lowStockThreshold: item.lowStockThreshold,
     emoji: item.emoji || '🍕',
-    color: item.color || '#FFC93C',
+    color: item.color || '#ffc53d',
     isAvailable: item.isAvailable,
   });
   const [saving, setSaving] = useState(false);

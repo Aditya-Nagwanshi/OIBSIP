@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CheckCircle2, CreditCard, Loader2, Lock, ShieldCheck, Smartphone, XCircle } from 'lucide-react';
+import { BadgeCheck, CheckCircle2, CreditCard, Loader2, Lock, ShieldCheck, Smartphone, XCircle } from 'lucide-react';
 import Modal from '../ui/Modal';
 import api from '../../lib/api';
 import { formatINR } from '../../lib/format';
@@ -26,12 +26,14 @@ function loadRazorpay() {
 export default function PaymentSheet({ open, payment, order, user, onPaid, onDismiss }) {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
+  const [method, setMethod] = useState('upi');
   const openedRazorpay = useRef(false);
 
   useEffect(() => {
     if (!open) {
       setStatus('idle');
       setError('');
+      setMethod('upi');
       openedRazorpay.current = false;
       return;
     }
@@ -48,7 +50,7 @@ export default function PaymentSheet({ open, payment, order, user, onPaid, onDis
           description: `Order ${payment.orderNumber}`,
           order_id: payment.razorpayOrderId,
           prefill: { name: user?.name || '', email: user?.email || '' },
-          theme: { color: '#E7334A' },
+          theme: { color: '#ff3d81' },
           handler: async (response) => {
             setStatus('processing');
             try {
@@ -119,35 +121,80 @@ export default function PaymentSheet({ open, payment, order, user, onPaid, onDis
     <Modal
       open={open}
       onClose={onDismiss}
-      title="Demo checkout"
-      subtitle="Razorpay is simulated in this environment. No real money moves."
+      title="Razorpay · Test mode"
+      subtitle="Simulated Razorpay checkout. No real money moves."
       closeLabel="Cancel payment"
     >
       <div className="pay-sheet">
         <div className="pay-sheet__brand">
-          <span className="pay-sheet__logo"><CreditCard size={18} /></span>
+          <span className="pay-sheet__logo"><ShieldCheck size={18} /></span>
           <div>
-            <strong>Slice Theory secure pay</strong>
-            <small>Order {order?.orderNumber || payment?.orderNumber}</small>
+            <strong>
+              Razorpay <span className="pay-sheet__test">Test mode</span>
+            </strong>
+            <small>Slice Theory · Order {order?.orderNumber || payment?.orderNumber}</small>
           </div>
           <span className="pay-sheet__amount">{formatINR(payment?.amount || 0)}</span>
         </div>
 
-        <div className="pay-sheet__methods">
-          <button className="is-active" type="button"><Smartphone size={16} /> UPI <small>Demo</small></button>
-          <button type="button"><CreditCard size={16} /> Card <small>Demo</small></button>
+        <div className="pay-sheet__testbar">
+          <BadgeCheck size={15} />
+          <span>Test credentials only. No card, UPI or bank account is charged.</span>
         </div>
 
-        <label className="pay-sheet__field">
-          <span>Demo UPI ID</span>
-          <div><input value="slice.theory@okdemo" readOnly /><span className="pay-sheet__verified"><CheckCircle2 size={14} /> Verified</span></div>
-        </label>
+        <div className="pay-sheet__methods" role="radiogroup" aria-label="Razorpay test payment method">
+          <button
+            className={method === 'upi' ? 'is-active' : ''}
+            type="button"
+            onClick={() => setMethod('upi')}
+            role="radio"
+            aria-checked={method === 'upi'}
+          >
+            <Smartphone size={16} /> UPI <small>Test</small>
+          </button>
+          <button
+            className={method === 'card' ? 'is-active' : ''}
+            type="button"
+            onClick={() => setMethod('card')}
+            role="radio"
+            aria-checked={method === 'card'}
+          >
+            <CreditCard size={16} /> Card <small>Test</small>
+          </button>
+        </div>
+
+        {method === 'upi' ? (
+          <label className="pay-sheet__field">
+            <span>Test UPI ID</span>
+            <div>
+              <input value="slice.theory@oktest" readOnly />
+              <span className="pay-sheet__verified"><CheckCircle2 size={14} /> Verified</span>
+            </div>
+          </label>
+        ) : (
+          <div className="pay-sheet__testcard">
+            <label className="pay-sheet__field">
+              <span>Test card number</span>
+              <div><input value="4242 4242 4242 4242" readOnly /></div>
+            </label>
+            <div className="pay-sheet__testcard-row">
+              <label className="pay-sheet__field">
+                <span>Expiry</span>
+                <div><input value="12 / 34" readOnly /></div>
+              </label>
+              <label className="pay-sheet__field">
+                <span>CVV</span>
+                <div><input value="•••" readOnly /></div>
+              </label>
+            </div>
+          </div>
+        )}
 
         <div className="pay-sheet__note">
           <ShieldCheck size={16} />
           <p>
-            This is a sandbox payment. Clicking <strong>Pay {formatINR(payment?.amount || 0)}</strong> will mark the order paid,
-            reserve ingredients and send your ticket to the kitchen.
+            Clicking <strong>Pay {formatINR(payment?.amount || 0)}</strong> runs a simulated Razorpay
+            success callback, marks the order paid and sends your ticket to the kitchen.
           </p>
         </div>
 
@@ -155,12 +202,16 @@ export default function PaymentSheet({ open, payment, order, user, onPaid, onDis
 
         <button className="btn btn--block btn--lg" onClick={payMock} disabled={status === 'processing' || status === 'paid'}>
           {status === 'processing' || status === 'paid' ? <Loader2 size={17} className="spin" /> : <Lock size={16} />}
-          {status === 'processing' ? 'Confirming payment…' : status === 'paid' ? 'Payment confirmed' : `Pay ${formatINR(payment?.amount || 0)}`}
+          {status === 'processing'
+            ? 'Confirming test payment…'
+            : status === 'paid'
+              ? 'Test payment confirmed'
+              : `Pay ${formatINR(payment?.amount || 0)} · Test mode`}
         </button>
         <button className="btn btn--ghost btn--block" onClick={onDismiss} disabled={status === 'processing'}>
           Pay later
         </button>
-        <p className="pay-sheet__fine">Demo mode · No card details required · Stock is only reserved after payment.</p>
+        <p className="pay-sheet__fine">Razorpay test mode · No real charge · Stock is reserved after payment.</p>
       </div>
     </Modal>
   );

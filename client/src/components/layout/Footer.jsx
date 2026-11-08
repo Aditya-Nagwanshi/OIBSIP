@@ -32,8 +32,8 @@ export default function Footer() {
           <div className="footer-brand">
             <Logo />
             <p>
-              Born from a simple love for pizza. Built to be a little more — a story in every slice, a theory in
-              every bite.
+              Dough with lore. Cheese with range. A theory in every slice, a little chaos in every
+              box.
             </p>
             <div className="footer-socials">
               <button onClick={() => socialSoon('Instagram')} aria-label="Instagram">
@@ -70,7 +70,7 @@ export default function Footer() {
           </div>
           <div className="footer-news">
             <h4>Newsletter</h4>
-            <p>Get the first slice of every new drop, offer and late-night experiment.</p>
+            <p>First dibs on new drops, secret codes and late-night experiments. No spam. Just pizza.</p>
             <form className="newsletter-form" onSubmit={subscribe}>
               <input
                 type="email"
@@ -83,7 +83,7 @@ export default function Footer() {
                 <ArrowRight size={16} />
               </button>
             </form>
-            <p className="footer-note">No spam. Just pizza. Unsubscribe anytime.</p>
+            <p className="footer-note">Unsubscribe whenever. The pizza will understand.</p>
           </div>
         </div>
         <div className="footer-bottom">

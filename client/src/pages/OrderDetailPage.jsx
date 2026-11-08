@@ -41,7 +41,7 @@ const CONFETTI = Array.from({ length: 26 }, (_, index) => ({
   left: `${(index * 41) % 100}%`,
   delay: `${(index % 7) * 0.24}s`,
   duration: `${2.6 + (index % 5) * 0.4}s`,
-  color: ['#E7334A', '#FFC93C', '#4E8D3A', '#FFB6C8', '#341A43'][index % 5],
+  color: ['#ff3d81', '#ffc53d', '#1f9d6d', '#a78bfa', '#2b1238'][index % 5],
   rotate: `${(index * 67) % 360}deg`,
 }));
 

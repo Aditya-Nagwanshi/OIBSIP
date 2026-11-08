@@ -6,14 +6,25 @@ import { seedDatabase } from './seed.js';
 import { initSocket, getIO } from './services/socket.js';
 import { startCronJobs } from './services/cron.js';
 
-async function start() {
-  await connectDatabase();
-
-  if (process.env.SEED_ON_START !== 'false') {
-    await seedDatabase({ quiet: true });
-    console.log('[seed] Catalog and admin access verified.');
+async function connectWithRetry() {
+  let delay = 5000;
+  for (;;) {
+    try {
+      await connectDatabase();
+      if (process.env.SEED_ON_START !== 'false') {
+        await seedDatabase({ quiet: true });
+        console.log('[seed] Catalog and admin access verified.');
+      }
+      return;
+    } catch (error) {
+      console.error(`[db] MongoDB unavailable (${error.message}). Retrying in ${Math.round(delay / 1000)}s.`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      delay = Math.min(delay * 2, 60000);
+    }
   }
+}
 
+async function start() {
   const server = http.createServer(app);
   initSocket(server);
   const cronTask = startCronJobs();
@@ -23,10 +34,12 @@ async function start() {
     console.log('  🍕  Slice Theory API');
     console.log(`  →  http://localhost:${env.port}/api/health`);
     console.log(`  →  Client: ${env.clientUrls[0]}`);
-    console.log(`  →  Payments: ${env.paymentsMode === 'razorpay' ? 'Razorpay test mode' : 'Demo mock checkout'}`);
+    console.log(`  →  Payments: ${env.paymentsMode === 'razorpay' ? 'Razorpay test keys connected' : 'Razorpay test mode (simulated)'}`);
     console.log(`  →  Admin email: ${env.adminEmail} (passwordless demo access)`);
     console.log('');
   });
+
+  connectWithRetry();
 
   let shuttingDown = false;
   const shutdown = async (signal) => {

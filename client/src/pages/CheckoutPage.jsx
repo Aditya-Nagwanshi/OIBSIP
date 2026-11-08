@@ -58,7 +58,8 @@ export default function CheckoutPage() {
   }, [user?.phone]);
 
   const deliveryIsFree = totals.delivery === 0;
-  const payMode = config?.payments?.mode === 'razorpay' ? 'Razorpay test checkout' : 'Demo checkout';
+  const isRazorpayLive = config?.payments?.mode === 'razorpay';
+  const payMode = isRazorpayLive ? 'Razorpay secure checkout' : 'Razorpay test mode';
   const availableCoupons = config?.coupons?.length
     ? config.coupons
     : [{ code: 'INFOBYTE', percent: 40, label: 'InfoByte special — 40% off' }];
@@ -286,9 +287,17 @@ export default function CheckoutPage() {
                   <span className="checkout-panel__icon"><Lock size={18} /></span>
                   <div>
                     <h2>Payment</h2>
-                    <p>{payMethod === 'cod' ? 'Pay cash at your door. Demo order, no real money.' : `${payMode}. This demo never charges a real card.`}</p>
+                    <p>
+                      {payMethod === 'cod'
+                        ? 'Pay cash at your door. Demo order, no real money.'
+                        : isRazorpayLive
+                          ? `${payMode}. Real Razorpay test keys are configured.`
+                          : `${payMode} · simulated UPI / card checkout. No real charge, just the full flow.`}
+                    </p>
                   </div>
-                  <span className="checkout-panel__pill"><ShieldCheck size={13} /> Secure</span>
+                  <span className={`checkout-panel__pill ${isRazorpayLive ? '' : 'checkout-panel__pill--test'}`}>
+                    <ShieldCheck size={13} /> {isRazorpayLive ? 'Secure' : 'Test mode'}
+                  </span>
                 </div>
                 <div className="checkout-pay-methods" role="radiogroup" aria-label="Payment method">
                   <label className={`pay-method ${payMethod === 'online' ? 'is-active' : ''}`}>
@@ -301,11 +310,14 @@ export default function CheckoutPage() {
                     />
                     <span className="pay-method__icon"><CreditCard size={18} /></span>
                     <span className="pay-method__body">
-                      <strong>{config?.payments?.mode === 'razorpay' ? 'UPI / Cards via Razorpay' : 'Pay online · Demo UPI'}</strong>
+                      <strong>
+                        {isRazorpayLive ? 'UPI / Cards via Razorpay' : 'Razorpay test mode'}
+                        {!isRazorpayLive ? <span className="pay-method__badge">Test</span> : null}
+                      </strong>
                       <small>
-                        {config?.payments?.mode === 'razorpay'
+                        {isRazorpayLive
                           ? 'Open the secure Razorpay window and confirm instantly.'
-                          : 'Simulated instant pay. Ingredient stock reserved right away.'}
+                          : 'Simulated UPI / card checkout with test credentials. No real money moves.'}
                       </small>
                     </span>
                     <span className="pay-method__tick"><BadgeCheck size={17} /></span>
@@ -415,7 +427,9 @@ export default function CheckoutPage() {
                 <p className="order-summary__fine">
                   {payMethod === 'cod'
                     ? 'Demo cash on delivery: the order enters the kitchen right away and cash is collected at your door.'
-                    : 'Placing the order creates a 30-minute payment window. Ingredients are reserved only after payment succeeds.'}
+                    : isRazorpayLive
+                      ? 'Placing the order creates a 30-minute payment window. Ingredients are reserved only after payment succeeds.'
+                      : 'Razorpay test mode: simulated checkout, no real charge. Ingredients are reserved after the test payment succeeds.'}
                 </p>
                 <div className="order-summary__trust">
                   <span><ShieldCheck size={13} /> Server-verified pricing</span>

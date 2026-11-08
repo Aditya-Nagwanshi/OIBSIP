@@ -4,11 +4,11 @@ export function PizzaMark({ size = 46 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
       <path d="M24 5 42 39.5c1.3 2.4-.7 5.2-3.3 4.2L24 36 9.3 43.7c-2.6 1-4.6-1.8-3.3-4.2L24 5Z" fill="currentColor" />
-      <path d="M24 36 38.7 43.7c2.6 1 4.6-1.8 3.3-4.2L26.9 12.6 24 36Z" fill="#E7334A" />
-      <circle cx="21" cy="22" r="3.2" fill="#E7334A" />
-      <circle cx="29.5" cy="31" r="2.6" fill="#E7334A" />
-      <circle cx="18" cy="32" r="1.9" fill="#4E8D3A" />
-      <circle cx="28" cy="18" r="2" fill="#4E8D3A" />
+      <path d="M24 36 38.7 43.7c2.6 1 4.6-1.8 3.3-4.2L26.9 12.6 24 36Z" fill="#ff3d81" />
+      <circle cx="21" cy="22" r="3.2" fill="#ffc53d" />
+      <circle cx="29.5" cy="31" r="2.6" fill="#ff3d81" />
+      <circle cx="18" cy="32" r="1.9" fill="#1f9d6d" />
+      <circle cx="28" cy="18" r="2" fill="#1f9d6d" />
     </svg>
   );
 }
@@ -23,7 +23,7 @@ export default function Logo({ light = false, showSub = true, to = '/', classNam
         <span>
           Slice <em>Theory</em>
         </span>
-        {showSub ? <small className="logo__sub">More than pizza</small> : null}
+        {showSub ? <small className="logo__sub">Pizza with lore</small> : null}
       </span>
     </Link>
   );

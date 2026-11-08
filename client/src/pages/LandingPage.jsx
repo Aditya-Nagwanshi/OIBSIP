@@ -19,9 +19,9 @@ import {
   Wheat,
 } from 'lucide-react';
 import { lazy, Suspense, useRef, useState } from 'react';
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useInView, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import MenuCarousel from '../components/landing/MenuCarousel';
-import ScrollStory from '../components/landing/ScrollStory';
+import StorySection from '../components/landing/StorySection';
 import usePizzas from '../hooks/usePizzas';
 import usePageTitle from '../hooks/usePageTitle';
 
@@ -202,8 +202,10 @@ function CouponSection() {
 }
 
 export default function LandingPage() {
-  usePageTitle('Pizza, with a theory');
+  usePageTitle('Pizza, but make it a theory');
   const { pizzas, loading } = usePizzas();
+  const labRef = useRef(null);
+  const labInView = useInView(labRef, { once: true, margin: '240px' });
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -240,7 +242,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             >
               <span className="lux-eyebrow__line" />
-              More than pizza. It&apos;s a theory.
+              Pizza, but make it a personality
             </motion.p>
 
             <motion.h1
@@ -259,8 +261,8 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
             >
-              Hand-stretched dough, slow-cooked sauce and a cheese pull that has ruined other pizzas
-              for people. Bright flavours, mild chaos, and a table that always feels like an occasion.
+              48-hour dough, unserious amounts of cheese and a crust that understood the assignment.
+              This isn&apos;t just dinner — it&apos;s the personality trait your group chat didn&apos;t know it needed.
             </motion.p>
 
             <motion.div
@@ -297,8 +299,8 @@ export default function LandingPage() {
               <div className="lux-proof__avatars" aria-hidden="true">
                 <span style={{ background: '#e7ddff' }}>RS</span>
                 <span style={{ background: '#ffd9df' }}>AV</span>
-                <span style={{ background: '#efe8dc' }}>SP</span>
-                <span style={{ background: '#181218', color: '#fffdf8' }}>MN</span>
+                <span style={{ background: '#fff2c2' }}>SP</span>
+                <span style={{ background: '#2b1238', color: '#fff' }}>MN</span>
               </div>
               <div>
                 <div className="lux-proof__stars" aria-label="4.9 out of 5 stars">
@@ -399,8 +401,8 @@ export default function LandingPage() {
               <h2 className="lux-h2">Big cart, <em>zero delivery fee.</em></h2>
             </div>
             <p className="lux-head__aside">
-              Cross ₹599 and shipping is on us. Can&apos;t pay online today? Hand the rider cash instead.
-              He prefers exact change and compliments.
+              Cross ₹599 and shipping is on us. Not feeling online payments? Hand the rider cash instead.
+              Exact change is cool. Compliments are cooler.
             </p>
           </div>
 
@@ -490,7 +492,7 @@ export default function LandingPage() {
 
       <CouponSection />
 
-      <ScrollStory />
+      <StorySection />
 
       <section className="lux-section lux-gallery" id="pull" aria-label="The cheese pull gallery">
         <div className="container">
@@ -546,17 +548,21 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <div className="lux-lab__stage">
-            <Suspense fallback={<img src="/media/pizzas/pepperoni.webp" alt="Pepperoni pizza" />}>
-              <Pizza3D
-                className="lux-lab__pizza"
-                showFloating
-                autoRotate
-                fallbackImage="/media/pizzas/pepperoni.webp"
-                toppers={['smoked-pepperoni', 'fresh-basil', 'black-olives', 'cherry-tomato']}
-                cameraPosition={[0, 3.4, 5.2]}
-              />
-            </Suspense>
+          <div className="lux-lab__stage" ref={labRef}>
+            {labInView ? (
+              <Suspense fallback={<img src="/media/pizzas/pepperoni.webp" alt="Pepperoni pizza" />}>
+                <Pizza3D
+                  className="lux-lab__pizza"
+                  showFloating
+                  autoRotate
+                  fallbackImage="/media/pizzas/pepperoni.webp"
+                  toppers={['smoked-pepperoni', 'fresh-basil', 'black-olives', 'cherry-tomato']}
+                  cameraPosition={[0, 3.4, 5.2]}
+                />
+              </Suspense>
+            ) : (
+              <img src="/media/pizzas/pepperoni.webp" alt="Pepperoni pizza" loading="lazy" />
+            )}
             <div className="lux-lab__hint"><span /> Drag to inspect the theory</div>
           </div>
         </div>

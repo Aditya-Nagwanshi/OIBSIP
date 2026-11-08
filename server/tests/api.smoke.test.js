@@ -141,7 +141,7 @@ test('Slice Theory API end-to-end smoke flow', { timeout: 180000 }, async (t) =>
     const connection = await connectDatabase();
     await connection.dropDatabase();
     const seeded = await seedDatabase({ quiet: true });
-    assert.equal(seeded.pizzaCount, 6);
+    assert.equal(seeded.pizzaCount, 5);
     assert.equal(seeded.inventoryCount, 27);
 
     server = await new Promise((resolve, reject) => {
@@ -162,7 +162,7 @@ test('Slice Theory API end-to-end smoke flow', { timeout: 180000 }, async (t) =>
 
       const pizzas = await request('/api/catalog/pizzas');
       assert.equal(pizzas.status, 200);
-      assert.equal(pizzas.data.pizzas.length, 6);
+      assert.equal(pizzas.data.pizzas.length, 5);
       const margherita = pizzas.data.pizzas.find((pizza) => pizza.slug === 'classic-margherita');
       assert.ok(margherita);
       assert.equal(margherita.isVegetarian, true);

@@ -15,7 +15,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(25, 11, 34, 0.48);
+  background: rgba(43, 18, 56, 0.48);
   backdrop-filter: blur(3px);
 }
 
@@ -29,7 +29,7 @@
   width: min(450px, 100%);
   height: 100dvh;
   background: var(--cream);
-  box-shadow: -24px 0 70px rgba(25, 11, 34, 0.24);
+  box-shadow: -24px 0 70px rgba(43, 18, 56, 0.24);
 }
 
 .drawer__head {
@@ -72,7 +72,7 @@
   font-size: 3.5rem;
   line-height: 1;
   margin-bottom: 18px;
-  filter: drop-shadow(0 10px 14px rgba(25, 11, 34, 0.14));
+  filter: drop-shadow(0 10px 14px rgba(43, 18, 56, 0.14));
 }
 
 .cart-empty h4 {
@@ -185,10 +185,10 @@
   margin-bottom: 12px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(255, 201, 60, 0.2);
+  background: rgba(255, 182, 39, 0.2);
   font-size: 0.74rem;
   font-weight: 700;
-  color: #7b5a11;
+  color: #8a5a00;
   text-align: center;
 }
 
@@ -239,7 +239,7 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(25, 11, 34, 0.58);
+  background: rgba(43, 18, 56, 0.58);
   backdrop-filter: blur(5px);
   overflow-y: auto;
 }
@@ -303,24 +303,6 @@
   overflow-y: auto;
 }
 
-.story-film {
-  width: 100%;
-  border-radius: var(--radius-md);
-  background: #000;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-.story-film__foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 14px;
-  font-size: 0.74rem;
-  color: var(--muted);
-}
-
 .payment-state {
   display: flex;
   flex-direction: column;
@@ -373,11 +355,13 @@
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), var(--orange));
 }
 
 .pay-sheet__brand strong {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-family: var(--font-display);
   font-size: 0.9rem;
   font-weight: 500;
@@ -385,7 +369,37 @@
 
 .pay-sheet__brand small {
   font-size: 0.68rem;
-  color: rgba(255, 248, 236, 0.55);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.pay-sheet__test {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pay-sheet__testbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(123, 77, 255, 0.26);
+  border-radius: 10px;
+  background: rgba(167, 139, 250, 0.14);
+  color: var(--purple);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.pay-sheet__testbar svg {
+  flex-shrink: 0;
 }
 
 .pay-sheet__amount {
@@ -419,12 +433,12 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #a894a2;
+  color: #8a7296;
 }
 
 .pay-sheet__methods button.is-active {
   border-color: var(--red);
-  background: rgba(231, 51, 74, 0.05);
+  background: rgba(255, 61, 129, 0.07);
   color: var(--ink);
 }
 
@@ -466,13 +480,13 @@
   gap: 10px;
   padding: 12px 14px;
   border-radius: 11px;
-  background: rgba(255, 201, 60, 0.15);
-  border: 1px solid rgba(255, 201, 60, 0.35);
+  background: rgba(255, 197, 61, 0.16);
+  border: 1px solid rgba(255, 182, 39, 0.4);
 }
 
 .pay-sheet__note svg {
   flex-shrink: 0;
-  color: #9a7214;
+  color: #8a5a00;
   margin-top: 2px;
 }
 
@@ -480,6 +494,18 @@
   font-size: 0.76rem;
   line-height: 1.55;
   color: #6d5313;
+}
+
+.pay-sheet__testcard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pay-sheet__testcard-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .pay-sheet__fine {
@@ -509,7 +535,7 @@
   border-radius: 13px;
   background: var(--ink);
   color: var(--cream);
-  box-shadow: 0 18px 45px rgba(25, 11, 34, 0.3);
+  box-shadow: 0 18px 45px rgba(43, 18, 56, 0.3);
   border-left: 4px solid var(--yellow);
   pointer-events: auto;
 }
@@ -529,7 +555,7 @@
 }
 
 .toast--error .toast__icon {
-  color: #ff7085;
+  color: #ff8fb4;
 }
 
 .toast--info .toast__icon {
@@ -552,12 +578,12 @@
 .toast__copy p {
   margin-top: 2px;
   font-size: 0.76rem;
-  color: rgba(255, 248, 236, 0.68);
+  color: rgba(255, 255, 255, 0.68);
   line-height: 1.4;
 }
 
 .toast__close {
-  color: rgba(255, 248, 236, 0.45);
+  color: rgba(255, 255, 255, 0.45);
   flex-shrink: 0;
   padding: 2px;
 }

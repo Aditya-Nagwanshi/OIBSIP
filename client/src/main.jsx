@@ -1,14 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import '@fontsource/fredoka/400.css';
-import '@fontsource/fredoka/500.css';
-import '@fontsource/fredoka/600.css';
-import '@fontsource/fredoka/700.css';
-import '@fontsource/manrope/300.css';
-import '@fontsource/manrope/400.css';
-import '@fontsource/manrope/500.css';
-import '@fontsource/manrope/600.css';
-import '@fontsource/manrope/700.css';
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/outfit';
 import './styles/base.css';
 import './styles/ui.css';
 import './styles/landing.css';
